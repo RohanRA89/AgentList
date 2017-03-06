@@ -3,11 +3,14 @@ package com.ironyard.controller;
 import com.ironyard.data.AgentList;
 import com.ironyard.data.AgentPermissions;
 import com.ironyard.repo.AgentListRepo;
+import com.ironyard.repo.PermissionsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by rohanayub on 3/3/17.
@@ -16,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestAgentController {
     @Autowired
     private AgentListRepo agentRepo;
+    @Autowired
+    PermissionsRepo agentPermissions;
 
     @RequestMapping(path="/agents/getAllAgents", method = RequestMethod.GET)
     public Iterable<AgentList> retrievePosts(){
@@ -51,6 +56,37 @@ public class RestAgentController {
         realAgentName = agentInformation.getCoverName();
         return "Access Denied for clearance level "+accessLevel+". Insuffiecent clearance for Agent: "
                 +realAgentName+" with clearance: "+accessLevelNeeded+".";
+    }
+
+    @RequestMapping(path = "/agents/create/{yourID}", method = RequestMethod.POST)
+    public String createAgent(@PathVariable Long yourID, @RequestParam String coverName, @RequestParam Integer accessLevel,
+                              @RequestParam String realName) throws Exception{
+        AgentList foundAgent = agentRepo.findOne(yourID);
+        Integer agentAccessLevel = foundAgent.getAccessLevel();
+        String existingAgentName = foundAgent.getCoverName();
+        //Iterable<AgentPermissions> addPermissions = foundAgent.getAccessPermission();
+        //System.out.println(addPermissions.toString());
+
+        String creation = null;
+        List<AgentPermissions> newAgentPermissions = null;
+
+        if(agentAccessLevel>=accessLevel){
+        AgentList newAgent = new AgentList();
+        newAgent.setCoverName(coverName);
+        newAgent.setRealName(realName);
+        newAgent.setAccessLevel(accessLevel);
+        //List<AgentPermissions> newAgentPermissions = new ArrayList<>();
+        //newAgentPermissions=tryToBulkAddPermissions.iterator(addPermissions);
+        //agentPermissions.save(newAgent.setAccessPermission((List<AgentPermissions>) addPermissions));
+        agentRepo.save(newAgent);
+
+        creation = "Agent "+coverName+" created with Access Level: "+accessLevel+".";
+        return creation;}
+
+        creation = "Agent creation unauthorized. The access level is higher than your current access level.\n Agent: "+existingAgentName+
+                "\n Agent Access Level: "+agentAccessLevel;
+        return creation;
+
     }
 
 

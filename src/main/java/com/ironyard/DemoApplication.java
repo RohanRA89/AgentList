@@ -25,7 +25,7 @@ public class DemoApplication {
 	@Bean
 	public Docket PostApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("MessageBoardPost-api")
+				.groupName("Agent-api")
 				.apiInfo(apiInfo())
 				.select()
 				.paths(regex("/agents/*.*"))

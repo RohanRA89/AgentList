@@ -1,6 +1,8 @@
 package com.ironyard.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -49,5 +51,14 @@ public class AgentPermissions {
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
+    }
+
+    @Override
+    public String toString() {
+        return "AgentPermissions{" +
+                "id=" + id +
+                ", key='" + key + '\'' +
+                ", permissionName='" + permissionName + '\'' +
+                '}';
     }
 }
